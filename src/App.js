@@ -1,26 +1,75 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import {
+  Container,
+  Divider
+} from '@material-ui/core';
+import Header from './components/Header';
+import Input from './components/Input';
+import Footer from './components/Footer';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const styles = {
+  root: {
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    '& p': {
+      padding: '0 5%',
+      lineHeight: '1.3em'
+    },
+    '& a': {
+      color: '#40a9ff',
+      textDecoration: 'none',
+      transition: 'all 100ms linear 0s',
+      '&:hover': {
+        color: '#096dd9',
+        textDecoration: 'underline'
+      }
+    }
+  }
+};
+
+class App extends Component {
+  state = {
+    inputValue: ''
+  };
+
+  handleChange = e => {
+    this.setState({ inputValue: e.target.value });
+  };
+
+  render = () => {
+    const { classes } = this.props;
+
+    return (
+      <Container
+        className={classes.root}
+        maxWidth="md"
+      >
+        <div>
+          <Header />
+          <p>
+            Find the nearest 8-bit (Xterm) color of a HEX or RGB color.
+            For a full list of the Xterm colors, see this reference:&nbsp;
+            <a
+              href="https://jonasjacek.github.io/colors"
+              rel="noopener noreferrer"
+            >
+              256 Colors Cheat Sheet
+            </a>
+            .
+          </p>
+          <Input
+            input={this.state.inputValue}
+            handleChange={this.handleChange}
+          />
+          <Divider />
+        </div>
+        <Footer />
+      </Container>
+    );
+  };
 }
 
-export default App;
+export default withStyles(styles)(App);
