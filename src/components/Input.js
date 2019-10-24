@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
   OutlinedInput,
@@ -10,7 +10,12 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     margin: '0 0 2em',
-    padding: '0 20%',
+    [theme.breakpoints.up('md')]: {
+      padding: '0 20%'
+    },
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    },
     '& > button': {
       color: '#ffffff',
       boxShadow: 'none',
@@ -23,28 +28,48 @@ const styles = theme => ({
   },
   input: {
     flexGrow: '1',
-    marginRight: '1em'
+    [theme.breakpoints.up('md')]: {
+      marginRight: '1em'
+    },
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: '0.5em'
+    }
   }
 });
 
-const Input = ({
-  classes,
-  value,
-  handleChange
-}) => (
-  <div className={classes.root}>
-    <OutlinedInput
-      className={classes.input}
-      value={value}
-      onChange={handleChange}
-    />
-    <Button
-      color="primary"
-      variant="contained"
-    >
-      Convert
-    </Button>
-  </div>
-);
+class Input extends Component {
+  state = {
+    value: ''
+  };
+
+  handleChange = e => {
+    this.setState({ value: e.target.value });
+  };
+
+  render = () => {
+    const {
+      classes,
+      handleSubmit
+    } = this.props;
+
+    return (
+      <div className={classes.root}>
+        <OutlinedInput
+          className={classes.input}
+          autoFocus
+          value={this.state.value}
+          onChange={this.handleChange}
+        />
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => handleSubmit(this.state.value)}
+        >
+          Convert
+        </Button>
+      </div>
+    );
+  };
+}
 
 export default withStyles(styles)(Input);

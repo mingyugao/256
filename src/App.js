@@ -6,6 +6,7 @@ import {
 } from '@material-ui/core';
 import Header from './components/Header';
 import Input from './components/Input';
+import Output from './components/Output';
 import Footer from './components/Footer';
 
 const styles = {
@@ -32,11 +33,13 @@ const styles = {
 
 class App extends Component {
   state = {
-    inputValue: ''
+    input: ''
   };
 
-  handleChange = e => {
-    this.setState({ inputValue: e.target.value });
+  handleSubmit = input => {
+    if (input) {
+      this.setState({ input });
+    }
   };
 
   render = () => {
@@ -61,10 +64,10 @@ class App extends Component {
             .
           </p>
           <Input
-            input={this.state.inputValue}
-            handleChange={this.handleChange}
+            handleSubmit={this.handleSubmit}
           />
           <Divider />
+          <Output input={this.state.input} />
         </div>
         <Footer />
       </Container>
