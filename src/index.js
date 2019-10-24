@@ -11,7 +11,8 @@ import * as serviceWorker from './serviceWorker';
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#ff7875'
+      main: '#ff7875',
+      light: '#ff918f'
     }
   }
 });

@@ -5,15 +5,18 @@ import {
   Button
 } from '@material-ui/core';
 
-const styles = {
+const styles = theme => ({
   root: {
     display: 'flex',
     justifyContent: 'space-between',
     margin: '0 0 2em',
     padding: '0 20%',
     '& > button': {
+      color: '#ffffff',
       boxShadow: 'none',
+      transition: 'all 100ms linear 0s',
       '&:hover': {
+        backgroundColor: theme.palette.primary.light,
         boxShadow: 'none'
       }
     }
@@ -22,7 +25,7 @@ const styles = {
     flexGrow: '1',
     marginRight: '1em'
   }
-};
+});
 
 const Input = ({
   classes,
@@ -37,7 +40,7 @@ const Input = ({
     />
     <Button
       color="primary"
-      variant="outlined"
+      variant="contained"
     >
       Convert
     </Button>
