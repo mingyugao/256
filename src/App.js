@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Container,
@@ -31,48 +31,42 @@ const styles = {
   }
 };
 
-class App extends Component {
-  state = {
-    input: ''
+const App = ({
+  classes
+}) => {
+  const [input, setInput] = useState('');
+
+  const handleSubmit = value => {
+    if (value) setInput(value);
   };
 
-  handleSubmit = input => {
-    if (input) {
-      this.setState({ input });
-    }
-  };
-
-  render = () => {
-    const { classes } = this.props;
-
-    return (
-      <Container
-        className={classes.root}
-        maxWidth="md"
-      >
-        <div>
-          <Header />
-          <p>
-            Find the nearest 8-bit (Xterm) color of a HEX or RGB color.
-            For a full list of the Xterm colors, see this reference:&nbsp;
-            <a
-              href="https://jonasjacek.github.io/colors"
-              rel="noopener noreferrer"
-            >
-              256 Colors Cheat Sheet
-            </a>
-            .
-          </p>
-          <Input
-            handleSubmit={this.handleSubmit}
-          />
-          <Divider />
-          <Output input={this.state.input} />
-        </div>
-        <Footer />
-      </Container>
-    );
-  };
-}
+  return (
+    <Container
+      className={classes.root}
+      maxWidth="md"
+    >
+      <div>
+        <Header />
+        <p>
+          Find the nearest 8-bit (Xterm) color of a HEX or RGB color.
+          For a full list of the Xterm colors, see this reference:&nbsp;
+          <a
+            href="https://jonasjacek.github.io/colors"
+            rel="noopener noreferrer"
+          >
+            256 Colors Cheat Sheet
+          </a>
+          .
+        </p>
+        <Input
+          handleSubmit={handleSubmit}
+        />
+        <Divider />
+        <Output input={input} />
+      </div>
+      <Footer />
+    </Container>
+  );
+};
 
 export default withStyles(styles)(App);

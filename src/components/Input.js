@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
   OutlinedInput,
@@ -37,39 +37,37 @@ const styles = theme => ({
   }
 });
 
-class Input extends Component {
-  state = {
-    value: ''
+const Input = ({
+  classes,
+  handleSubmit
+}) => {
+  const [value, setValue] = useState('');
+
+  const handleKeyPress = e => {
+    if (e.key === 'Enter') {
+      handleSubmit(value);
+      e.target.blur();
+    }
   };
 
-  handleChange = e => {
-    this.setState({ value: e.target.value });
-  };
-
-  render = () => {
-    const {
-      classes,
-      handleSubmit
-    } = this.props;
-
-    return (
-      <div className={classes.root}>
-        <OutlinedInput
-          className={classes.input}
-          autoFocus
-          value={this.state.value}
-          onChange={this.handleChange}
-        />
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => handleSubmit(this.state.value)}
-        >
-          Convert
-        </Button>
-      </div>
-    );
-  };
-}
+  return (
+    <div className={classes.root}>
+      <OutlinedInput
+        className={classes.input}
+        autoFocus
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        onKeyPress={e => handleKeyPress(e)}
+      />
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={() => handleSubmit(value)}
+      >
+        Convert
+      </Button>
+    </div>
+  );
+};
 
 export default withStyles(styles)(Input);
