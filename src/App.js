@@ -9,12 +9,15 @@ import Input from './components/Input';
 import Output from './components/Output';
 import Footer from './components/Footer';
 
-const styles = {
+const styles = theme => ({
   root: {
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('sm')]: {
+      paddingTop: '50px'
+    },
     '& p': {
       padding: '0 5%',
       lineHeight: '1.3em'
@@ -29,7 +32,7 @@ const styles = {
       }
     }
   }
-};
+});
 
 const App = ({
   classes

@@ -55,6 +55,7 @@ const Input = ({
       <OutlinedInput
         className={classes.input}
         autoFocus
+        placeholder="Try a color, e.g #ff7875 or rgb(255,145,143)"
         value={value}
         onChange={e => setValue(e.target.value)}
         onKeyPress={e => handleKeyPress(e)}
