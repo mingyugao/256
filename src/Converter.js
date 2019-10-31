@@ -1,8 +1,11 @@
 let data;
+const publicPath = process.env.NODE_ENV === 'development'
+  ? ''
+  : '/color-converter';
 
 const getData = async () => {
   if (!data) {
-    const response = await fetch('/data.json');
+    const response = await fetch(`${publicPath}/data.json`);
     data = await response.json();
   }
   return data;
