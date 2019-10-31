@@ -5,7 +5,8 @@ import {
   TableHead,
   TableBody,
   TableRow,
-  TableCell
+  TableCell,
+  Button
 } from '@material-ui/core';
 import Converter from '../Converter';
 
@@ -31,6 +32,16 @@ const styles = theme => ({
       height: '50px',
       borderRadius: '50%'
     }
+  },
+  button: {
+    position: 'relative',
+    left: '50%',
+    transform: 'translate(-50%, 50%)'
+  },
+  mobileHidden: {
+    [theme.breakpoints.down('sm')]: {
+      display: 'none'
+    }
   }
 });
 
@@ -38,28 +49,37 @@ const Output = ({
   classes,
   input
 }) => {
-  const [results, setResults] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const isInitialMount = useRef(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
+  const [numDisplayed, setNumDisplayed] = useState(50);
+
+  const displayMore = () => {
+    const batchSize = 50;
+    const newNumDisplayed = numDisplayed + batchSize > data.length
+      ? data.length
+      : numDisplayed + batchSize;
+    setNumDisplayed(newNumDisplayed);
+  };
 
   useEffect(() => {
-    (async () => {
-      if (isInitialMount.current) {
-        isInitialMount.current = false;
-      } else {
-        setIsLoading(true);
-        try {
-          const similar = await Converter.findSimilar(input);
-          similar.sort((a, b) => b.similarity - a.similarity);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      setIsLoading(true);
+      Converter.findSimilarEuclidean(input)
+        .then(results => {
+          setData(results);
           setError(null);
-          setResults(similar);
-        } catch (e) {
+          setNumDisplayed(50);
+        }).catch(e => {
           setError(e);
-        }
-        setIsLoading(false);
-      }
-    })();
+          setData([]);
+        }).finally(() => {
+          setIsLoading(false);
+        });
+    }
   }, [input]);
 
   return (
@@ -72,7 +92,7 @@ const Output = ({
           <p>{error}</p>
         </div>
       )}
-      {!isLoading && !error && results.length !== 0 && (
+      {!isLoading && !error && data.length !== 0 && (
         <React.Fragment>
           <div className={classes.title}>
             <h1>
@@ -87,19 +107,39 @@ const Output = ({
                 <TableCell>Xterm</TableCell>
                 <TableCell>RGB</TableCell>
                 <TableCell>HEX</TableCell>
+                <TableCell className={classes.mobileHidden}>HSL</TableCell>
+                <TableCell className={classes.mobileHidden}>
+                  Similarity
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {results.slice(0, 50).map((result, index) => (
+              {data.slice(0, numDisplayed).map((data, index) => (
                 <TableRow key={index}>
-                  <TableCell style={{ backgroundColor: result.hexString }} />
-                  <TableCell>{result.colorId}</TableCell>
-                  <TableCell>{result.rgb}</TableCell>
-                  <TableCell>{result.hexString}</TableCell>
+                  <TableCell style={{ backgroundColor: data.hexString }} />
+                  <TableCell>{data.colorId}</TableCell>
+                  <TableCell>{data.rgb}</TableCell>
+                  <TableCell>{data.hexString}</TableCell>
+                  <TableCell className={classes.mobileHidden}>
+                    {data.hsl}
+                  </TableCell>
+                  <TableCell className={classes.mobileHidden}>
+                    {data.similarity}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          {numDisplayed < data.length && (
+            <Button
+              className={classes.button}
+              color="secondary"
+              variant="text"
+              onClick={() => displayMore()}
+            >
+              Show more
+            </Button>
+          )}
         </React.Fragment>
       )}
     </React.Fragment>

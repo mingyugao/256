@@ -65,7 +65,7 @@ const Input = ({
         variant="contained"
         onClick={() => handleSubmit(value)}
       >
-        Convert
+        CONVERT
       </Button>
     </div>
   );

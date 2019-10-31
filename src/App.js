@@ -23,11 +23,11 @@ const styles = theme => ({
       lineHeight: '1.3em'
     },
     '& a': {
-      color: '#40a9ff',
+      color: theme.palette.secondary.main,
       textDecoration: 'none',
       transition: 'all 100ms linear 0s',
       '&:hover': {
-        color: '#096dd9',
+        color: theme.palette.secondary.light,
         textDecoration: 'underline'
       }
     }

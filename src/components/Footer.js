@@ -4,7 +4,7 @@ import { Divider } from '@material-ui/core';
 
 const styles = {
   root: {
-    margin: '2em 0',
+    margin: '5em 0 2em',
     fontSize: '0.5em'
   }
 };

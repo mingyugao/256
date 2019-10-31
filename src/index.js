@@ -13,6 +13,15 @@ const theme = createMuiTheme({
     primary: {
       main: '#ff7875',
       light: '#ff918f'
+    },
+    secondary: {
+      main: '#40a9ff',
+      light: '#096dd9'
+    }
+  },
+  typography: {
+    button: {
+      textTransform: 'none'
     }
   }
 });

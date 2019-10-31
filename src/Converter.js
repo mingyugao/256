@@ -114,7 +114,7 @@ const computeSimilarity = (distance, maxDistance) => {
   return 100 - Math.round((distance / maxDistance) * 100);
 };
 
-const findSimilar = input => {
+const findSimilarEuclidean = input => {
   return new Promise(async (res, rej) => {
     const colors = await getData();
     let origin;
@@ -133,12 +133,16 @@ const findSimilar = input => {
     const distances = await Promise.all(distancesToCompute);
     const maxDistance = Math.max(...distances);
 
-    return res(colors.data.map((color, index) => ({
+    const results = colors.data.map((color, index) => ({
       ...color,
       rgb: `rgb(${color.rgb.r},${color.rgb.g},${color.rgb.b})`,
+      hsl: `hsl(${color.hsl.h},${color.hsl.s}%,${color.hsl.l}%)`,
       similarity: computeSimilarity(distances[index], maxDistance)
-    })));
+    }));
+    results.sort((a, b) => b.similarity - a.similarity);
+
+    return res(results);
   });
 };
 
-export default { findSimilar };
+export default { findSimilarEuclidean };
