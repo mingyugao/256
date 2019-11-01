@@ -11,12 +11,15 @@ import Footer from './components/Footer';
 
 const styles = theme => ({
   root: {
-    minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     [theme.breakpoints.down('sm')]: {
+      minHeight: '94vh',
       paddingTop: '50px'
+    },
+    [theme.breakpoints.up('md')]: {
+      minHeight: '100vh',
     },
     '& p': {
       padding: '0 5%',
