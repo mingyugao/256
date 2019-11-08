@@ -56,7 +56,7 @@ const Output = ({
   const [numDisplayed, setNumDisplayed] = useState(50);
 
   const displayMore = () => {
-    const batchSize = 50;
+    const batchSize = 25;
     const newNumDisplayed = numDisplayed + batchSize > data.length
       ? data.length
       : numDisplayed + batchSize;
@@ -68,17 +68,16 @@ const Output = ({
       isInitialMount.current = false;
     } else {
       setIsLoading(true);
-      Converter.findSimilarEuclidean(input)
-        .then(results => {
-          setData(results);
-          setError(null);
-          setNumDisplayed(50);
-        }).catch(e => {
-          setError(e);
-          setData([]);
-        }).finally(() => {
-          setIsLoading(false);
-        });
+      Converter.findSimilar(input).then(results => {
+        setData(results);
+        setError(null);
+        setNumDisplayed(25);
+      }).catch(e => {
+        setError(e);
+        setData([]);
+      }).finally(() => {
+        setIsLoading(false);
+      });
     }
   }, [input]);
 
@@ -108,9 +107,6 @@ const Output = ({
                 <TableCell>RGB</TableCell>
                 <TableCell>HEX</TableCell>
                 <TableCell className={classes.mobileHidden}>HSL</TableCell>
-                <TableCell className={classes.mobileHidden}>
-                  Similarity
-                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -122,9 +118,6 @@ const Output = ({
                   <TableCell>{data.hexString}</TableCell>
                   <TableCell className={classes.mobileHidden}>
                     {data.hsl}
-                  </TableCell>
-                  <TableCell className={classes.mobileHidden}>
-                    {data.similarity}
                   </TableCell>
                 </TableRow>
               ))}

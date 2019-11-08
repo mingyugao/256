@@ -1,3 +1,5 @@
+import Diff from 'color-diff';
+
 let data;
 const publicPath = process.env.NODE_ENV === 'development'
   ? ''
@@ -68,9 +70,9 @@ const parseHex = hexString => {
   };
 
   return {
-    r: convertDigit(rStr),
-    g: convertDigit(gStr),
-    b: convertDigit(bStr)
+    R: convertDigit(rStr),
+    G: convertDigit(gStr),
+    B: convertDigit(bStr)
   };
 };
 
@@ -82,70 +84,70 @@ const parseRGB = rgbString => {
     .map(num => parseInt(num));
 
   return {
-    r: nums[0],
-    g: nums[1],
-    b: nums[2]
+    R: nums[0],
+    G: nums[1],
+    B: nums[2]
   };
 };
 
-const parseToRGB = input => {
-  let origin;
+const parseToAbstractRGB = input => {
   if (isHex(input)) {
-    origin = parseHex(input);
+    return parseHex(input);
   } else if (isRGB(input)) {
-    origin = parseRGB(input);
-  } else {
-    throw new Error();
+    return parseRGB(input);
   }
-  return origin;
+  return null;
 };
 
-const computeColorDistance = (
-  color1,
-  color2
-) => {
-  return new Promise((res, rej) => {
-    res(
-      Math.pow(color1.r - color2.r, 2) +
-      Math.pow(color1.g - color2.g, 2) +
-      Math.pow(color1.b - color2.b, 2)
-    );
-  });
+const preprocessPalette = colors => {
+  return colors.data.map(color => ({
+    ...color,
+    R: color.rgb.r,
+    G: color.rgb.g,
+    B: color.rgb.b
+  }));
 };
 
-const computeSimilarity = (distance, maxDistance) => {
-  return 100 - Math.round((distance / maxDistance) * 100);
+const sortByClosest = (origin, palette) => {
+  const results = [];
+
+  const helper = newPalette => {
+    if (!newPalette.length) return;
+    const closest = Diff.closest(origin, newPalette);
+    results.push(closest);
+    const filtered = newPalette.filter(color => {
+      return color.colorId !== closest.colorId;
+    });
+    helper(filtered);
+  };
+
+  helper(palette);
+  return results;
 };
 
-const findSimilarEuclidean = input => {
+const postprocessPalette = colors => {
+  return colors.map(color => ({
+    ...color,
+    rgb: `rgb(${color.rgb.r},${color.rgb.g},${color.rgb.b})`,
+    hsl: `hsl(${color.hsl.h},${color.hsl.s}%,${color.hsl.l}%)`,
+  }));
+};
+
+const findSimilar = input => {
   return new Promise(async (res, rej) => {
     const colors = await getData();
-    let origin;
+    const palette = preprocessPalette(colors);
+    const origin = parseToAbstractRGB(input);
 
-    try {
-      origin = parseToRGB(input);
-    } catch (e) {
+    if (!origin) {
       return rej(`${input} is not a valid HEX or RGB color.`);
     }
 
-    const distancesToCompute = [];
-    colors.data.forEach(color => {
-      distancesToCompute.push(computeColorDistance(color.rgb, origin));
-    });
+    let results = sortByClosest(origin, palette);
+    results = postprocessPalette(results);
 
-    const distances = await Promise.all(distancesToCompute);
-    const maxDistance = Math.max(...distances);
-
-    const results = colors.data.map((color, index) => ({
-      ...color,
-      rgb: `rgb(${color.rgb.r},${color.rgb.g},${color.rgb.b})`,
-      hsl: `hsl(${color.hsl.h},${color.hsl.s}%,${color.hsl.l}%)`,
-      similarity: computeSimilarity(distances[index], maxDistance)
-    }));
-    results.sort((a, b) => b.similarity - a.similarity);
-
-    return res(results);
+    res(results);
   });
 };
 
-export default { findSimilarEuclidean };
+export default { findSimilar };
